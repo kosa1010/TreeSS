@@ -1,0 +1,18 @@
+@relation data
+
+@attribute temperatura numeric
+@attribute ciśnienie numeric
+@attribute wysokość numeric
+@attribute samopoczucie {0,1,3}
+
+@data
+1, 1, 0, 1
+1, 1, 2, 1
+1, 0, 0, 1
+2, 0, 2, 1
+2, 0, 2, 0
+2, 1, 2, 0
+2, 2, 2, 0
+2, 2, 0, 3
+3, 2, 0, 0
+1, 2, 3, 0
