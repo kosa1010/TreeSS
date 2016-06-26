@@ -32,7 +32,7 @@ public class BuildTree {
      */
     public static void setAllAtrribAsDecision(Instances data, TREE t, String options) throws Exception {
         if (t == TREE.C45) {
-            System.out.println(ANSI_CYAN + "\n\n\tDRZEWA DECYZYJNE ZBUDOWANE "
+            System.out.println(ANSI_GREEN + "\n\n\tDRZEWA DECYZYJNE ZBUDOWANE "
                     + "ALGORYTMEM J48 DLA POSZCZEGÓLNYCH DECYZJI" + ANSI_RESET);
             for (int i = 0; i < data.numAttributes(); i++) {
                 data.setClass(data.attribute(i));
