@@ -5,6 +5,7 @@
  */
 package com.mycompany.treess;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,22 +82,25 @@ public class Data {
     }
 
     /**
-     * Przpisuje dane z obiektu instance do tablicy dwuwyimarowej
+     * Przpisuje dane z obiektu instances do tablicy dwuwymiarowej
      *
      * @param data
      * @return
      */
     public int[][] dataFromInnstancesToTable(Instances data) {
-        int[][] table = new int[data.numInstances()][data.instance(0).toDoubleArray().length];
-        double[] temp;
+        String buf[];
+        int[] obj;
+        List<int[]> listObj = new ArrayList<>();
         for (int i = 0; i < data.numInstances(); i++) {
-            temp = data.instance(i).toDoubleArray();
-            for (int j = 0; j < temp.length; j++) {
-                table[i][j] = (int) temp[j];
+            buf = data.instance(i).toString().split(",");
+            obj = new int[buf.length];
+            for (int k = 0; k < buf.length; k++) {
+                obj[k] = Integer.valueOf(buf[k]);
             }
+            listObj.add(obj);
         }
-        dataInTable = table;
-        return table;
+        dataInTable = listObj.toArray(new int[][]{});
+        return listObj.toArray(new int[][]{});
     }
 
     /**
@@ -122,10 +126,7 @@ public class Data {
         // System.out.println(listOfAtribValue.get(data.numAttributes()-1));
         Set<List> ss = new HashSet();
         //System.out.println(
-        listOfAtribValue.get(3).stream().forEach((a)
-                -> {
-            System.out.println(a);
-        });
+        
         for (Object object : listOfAtribValue.get(0)) {
             ss.add(new ArrayList((int) object));
         }
