@@ -11,10 +11,10 @@ import java.util.List;
  *
  * @author kosa1010
  */
-public class Kolumna {
+public class Attrib {
     private List<Integer> kolumnaJedna;
 
-    public Kolumna(List<Integer> kolumnaJedna) {
+    public Attrib(List<Integer> kolumnaJedna) {
         this.kolumnaJedna = kolumnaJedna;
     }
 

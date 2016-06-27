@@ -5,22 +5,24 @@
  */
 package com.mycompany.treess;
 
-import org.apache.commons.lang3.StringUtils;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import weka.classifiers.Classifier;
 
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
-import weka.core.converters.ArffSaver;
 
 /**
  * @author kosa1010
@@ -110,51 +112,65 @@ public class Data {
      * @return
      * @throws java.io.IOException
      */
-    public Instances dataFromTableToInstances(int[][] dataTable) throws IOException {
+    public Instances dataFromTableToInstances(int[][] dataTable) throws IOException, Exception {
 
         FastVector attributes = new FastVector(); //utworzenie listy atrybutow dla nowej tablicy
         for (int i = 0; i < data.numAttributes() - 1; i++) {
             attributes.addElement(new Attribute(data.attribute(i).name()));
         }
         FastVector labels = new FastVector(); //Utworzenie wartosci nowego atrybutu symbolicznego
-        //for ( is : data.attribute(data.numAttributes()-1)) {
-        //   for (int i = 0; i < listOfAtribValue.get(data.numAttributes() - 1).size(); i++) {
+
         System.out.println("****************************************************************");
-        listOfAtribValue.stream().forEach((set) -> {
-            //          System.out.println(set);
-        });
-        // System.out.println(listOfAtribValue.get(data.numAttributes()-1));
-        Set<List> ss = new HashSet();
-        //System.out.println(
-        
-        for (Object object : listOfAtribValue.get(0)) {
-            ss.add(new ArrayList((int) object));
-        }
-        int tab[][] = setsToTab(listOfAtribValue.get(0));
-        System.out.println(tab[0].length);
-        for (int s : tab[0]) {
+
+        int tab[] = listToTab(listOfAtribValue.get(data.numAttributes() - 1));//zamiana niepowtzarzalnych wartości atrybutu decyzyjnego na tablice
+
+        for (int s : tab) {
             labels.addElement(String.valueOf(s));
         }
         Attribute dec = new Attribute(data.attribute(data.numAttributes() - 1).name(), labels); //Utworzernie atrybutu symbolicznego
         attributes.addElement(dec);
-        Instances dataInstances = new Instances("Dopełnienie", attributes, 0);
-
+        Instances dataInstances = new Instances("Dopełnienie", attributes, 71);
+        //dodawanie ilości instancji takiej jak ilośc wierszy w tablicy
         for (int[] dataTable1 : dataTable) {
             Instance instance = new Instance(attributes.size());
             dataInstances.add(instance);
         }
-
+        //wybieranie kolejnych nowych instancji
+        int r = 0;
         for (int i = 0; i < dataInstances.numInstances(); i++) {
             Instance instance = dataInstances.instance(i);
-
+        //    System.out.print(r + " ");
+            //ustawianie poszczególnych wartości dla nowych instancji
             for (int k = 0; k < dataTable[0].length; k++) {
                 instance.setValue(k, dataTable[i][k]);
+          //      System.out.print(dataTable[i][k]);
             }
+       //     System.out.println("");
+            r++;
         }
 
-        saveData(dataInstances, "./kombinacje.arff"); //Zapis utworzonej tablicy
-        // dataWithNewInstances = dataInstances;
+        //saveData(dataInstances, "./kombinacje.arff"); //Zapis utworzonej tablicy
+        dataWithNewInstances = dataInstances;
+        List<Instance> mojaSyuperLista = new ArrayList();
+        for (int i = 0; i < dataInstances.numInstances(); i++) {
+            //System.out.println("\t\t\t" + Arrays.toString(dataInstances.instance(i).toDoubleArray()));
+            Instance ist = new Instance(dataInstances.instance(i));//
+            System.out.println(ist.toString());
+            mojaSyuperLista.add(ist);
 
+        }
+        for (int k = 0; k < mojaSyuperLista.size(); k++) {
+         //  System.out.println("moja" + mojaSyuperLista.get(k).toString());
+
+        }
+//        
+//         for (int i = 0; i < data.numInstances(); i++) {
+//            System.out.println("\t\t\t" + data.instance(i).toString());
+////        }
+//        Classifier cls_co = (Classifier) weka.core.SerializationHelper
+//                .read("/CO_J48Model.model");
+
+    //    System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         return dataInstances;
     }
 
@@ -167,10 +183,14 @@ public class Data {
      */
     public void saveData(Instances data, String fileName)
             throws IOException {
-        ArffSaver saver = new ArffSaver(); //Utworzenie obiektu zapisujacego dane
-        saver.setFile(new File(fileName));
-        saver.setInstances(data);
-        saver.writeBatch();
+        try (//        ArffSaver saver = new ArffSaver(); //Utworzenie obiektu zapisujacego dane
+                //        saver.setFile(new File(fileName));
+                //        saver.setInstances(data);
+                //        saver.writeBatch();
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write(data.toString());
+            writer.flush();
+        }
     }
 
     /**
@@ -352,5 +372,20 @@ public class Data {
             l.remove(tempTab[i]);
         }
         return l.toArray(new int[][]{});
+    }
+
+    /**
+     * Zamienia listę na tablicę
+     *
+     * @param sl
+     * @return
+     */
+    public int[] listToTab(Set<Integer> sl) {
+        Iterator it = sl.iterator();
+        int tab[] = new int[sl.size()];
+        for (int i = 0; i < sl.size(); i++) {
+            tab[i] = Integer.valueOf(String.valueOf(it.next()));
+        }
+        return tab;
     }
 }
