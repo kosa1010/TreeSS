@@ -31,7 +31,7 @@ public class MainClass {
 //        });
         Data.permutation = data.setsToTab(Data.permutate);
         data.delTheSameObj();
-        data.setDataComplement(data.dataFromTableToInstances(Data.dataPerm));////////nosz kurwa tu się krzaczy
+        data.setDataComplement(data.dataFromTableToInstances(Data.dataPerm));//////// tu się krzaczy
 
         Instances newI = new Instances(data.getDataComplement());
 //        for (int i = 0; i < newI.numInstances(); i++) {
