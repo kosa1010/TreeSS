@@ -1,6 +1,7 @@
 package com.mycompany.treess;
 
 import static com.mycompany.treess.Data.getCombinations;
+import java.util.List;
 import java.util.Scanner;
 import weka.core.Instances;
 
@@ -26,17 +27,12 @@ public class MainClass {
 
         Data.permutate = getCombinations(Data.listOfAtributesValue);
 
-//        Data.permutate.stream().forEach((list) -> {
-//            System.out.println(list.toString());
-//        });
         Data.permutation = data.setsToTab(Data.permutate);
         data.delTheSameObj();
         data.setDataComplement(data.dataFromTableToInstances(Data.dataPerm));//////// tu się krzaczy
 
         Instances newI = new Instances(data.getDataComplement());
-//        for (int i = 0; i < newI.numInstances(); i++) {
-//            System.out.println("objekt  " + i + " " + newI.instance(i).toString());
-//        }
+
         System.out.println("ilośc elementów w dopełnieniu " + Data.dataPerm.length);
         System.out.println("\n\n Podaj parametry dla uworzenia drzewa algorytmem J48 ");
         String optionsJ48 = sc.next();
@@ -45,8 +41,14 @@ public class MainClass {
         String optionsCART = sc.next();
         BuildTree.setAllAtrribAsDecision(data.getData(), BuildTree.TREE.CART, optionsCART);
 
-        //  System.out.println("\n dla nowych]\n");
         C45 c45 = new C45();
 //        c45.buildJ48(newI, "-U");
+        List<TreeCARTj48> listClasyficators = BuildTree.listOfTrees;
+        listClasyficators.stream().map((tree) -> {
+            System.out.println(tree.toString());
+            return tree;
+        }).forEach((tree) -> {
+            System.out.println("drzewko " + listClasyficators.indexOf(tree));
+        });
     }
 }
