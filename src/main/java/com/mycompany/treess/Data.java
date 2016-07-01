@@ -11,12 +11,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import weka.classifiers.Classifier;
 
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -139,13 +137,13 @@ public class Data {
         int r = 0;
         for (int i = 0; i < dataInstances.numInstances(); i++) {
             Instance instance = dataInstances.instance(i);
-        //    System.out.print(r + " ");
+            //    System.out.print(r + " ");
             //ustawianie poszczególnych wartości dla nowych instancji
             for (int k = 0; k < dataTable[0].length; k++) {
                 instance.setValue(k, dataTable[i][k]);
-          //      System.out.print(dataTable[i][k]);
+                //      System.out.print(dataTable[i][k]);
             }
-       //     System.out.println("");
+            //     System.out.println("");
             r++;
         }
 
@@ -160,7 +158,7 @@ public class Data {
 
         }
         for (int k = 0; k < mojaSyuperLista.size(); k++) {
-         //  System.out.println("moja" + mojaSyuperLista.get(k).toString());
+              System.out.println("moja " + mojaSyuperLista.get(k).toString());
 
         }
 //        
@@ -170,7 +168,7 @@ public class Data {
 //        Classifier cls_co = (Classifier) weka.core.SerializationHelper
 //                .read("/CO_J48Model.model");
 
-    //    System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        //    System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         return dataInstances;
     }
 

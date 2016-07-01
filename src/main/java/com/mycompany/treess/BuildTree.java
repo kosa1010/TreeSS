@@ -1,5 +1,8 @@
 package com.mycompany.treess;
 
+import java.util.ArrayList;
+import java.util.List;
+import weka.classifiers.Classifier;
 import weka.core.Instances;
 
 /**
@@ -11,6 +14,7 @@ public class BuildTree {
     public static enum TREE {
         C45, CART
     };
+    public static List<TreeCARTj48> listOfTrees = new ArrayList<>();
     public static final String ANSI_RESET = "\u001B[0m";//OK
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -40,6 +44,9 @@ public class BuildTree {
                         + data.attribute(i).name() + "\n" + ANSI_RESET);
                 C45 c45 = new C45();
                 c45.buildJ48(data, options);
+                TreeCARTj48 obj = new TreeCARTj48();
+                obj.setC45(c45);
+                listOfTrees.add(obj);
             }
         } else {
             System.out.println(ANSI_GREEN + "\n\n\tDRZEWA DECYZYJNE ZBUDOWANE"
@@ -50,6 +57,9 @@ public class BuildTree {
                         + data.attribute(i).name() + "\n" + ANSI_RESET);
                 CART cart = new CART();
                 cart.buildCART(data, options);
+                TreeCARTj48 obj = new TreeCARTj48();
+                obj.setCart(cart);
+                listOfTrees.add(obj);
             }
         }
     }
