@@ -13,7 +13,7 @@ import weka.core.Utils;
  *
  * @author kosa1010
  */
-public class C45 {
+public class C45 extends J48 {
 
     public static String options;
     public static String tree;
@@ -23,11 +23,11 @@ public class C45 {
      *
      * @param data
      * @param optionsSet
+     * @return j48 tree object
      * @throws Exception
      */
-    public void buildJ48(Instances data, String optionsSet) throws Exception {
+    public J48 buildJ48(Instances data, String optionsSet) throws Exception {
         String[] options = Utils.splitOptions(optionsSet);
-        //   data.setClass("sdkfmwkmfcwkcm");
         data.setClassIndex(data.numAttributes() - 1);
         J48 j48 = new J48();
         j48.setOptions(options); //Ustawienie opcji
@@ -35,6 +35,7 @@ public class C45 {
         tree = j48.toString();
         j48.subtreeRaisingTipText();
         System.out.println(j48.toString());
+        return j48;
     }
-   
+
 }

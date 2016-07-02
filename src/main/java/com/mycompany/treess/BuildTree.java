@@ -1,9 +1,13 @@
 package com.mycompany.treess;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
+import java.lang.String;
+import weka.classifiers.trees.J48;
+import weka.core.Instance;
 
 /**
  *
@@ -14,6 +18,10 @@ public class BuildTree {
     public static enum TREE {
         C45, CART
     };
+
+    private static final Instances complementData = new Data().getDataComplement();
+    public static Instances instances;
+    public static List<String[]> listPredictionsC45;
     public static List<TreeCARTj48> listOfTrees = new ArrayList<>();
     public static final String ANSI_RESET = "\u001B[0m";//OK
     public static final String ANSI_BLACK = "\u001B[30m";
@@ -36,17 +44,26 @@ public class BuildTree {
      */
     public static void setAllAtrribAsDecision(Instances data, TREE t, String options) throws Exception {
         if (t == TREE.C45) {
+            listPredictionsC45 = new ArrayList<>();
             System.out.println(ANSI_GREEN + "\n\n\tDRZEWA DECYZYJNE ZBUDOWANE "
                     + "ALGORYTMEM J48 DLA POSZCZEGÓLNYCH DECYZJI" + ANSI_RESET);
             for (int i = 0; i < data.numAttributes(); i++) {
-                data.setClass(data.attribute(i));
+                data.setClassIndex(i);
+                System.out.print("Nowy atrybut decyzyjny " + data.classAttribute().name() + " o id " + i);
+                System.out.println();
                 System.out.println(ANSI_PURPLE + "\t\tAtrybut decyzyjny  "
                         + data.attribute(i).name() + "\n" + ANSI_RESET);
                 C45 c45 = new C45();
+//               
+                
                 c45.buildJ48(data, options);
-                TreeCARTj48 obj = new TreeCARTj48();
-                obj.setC45(c45);
-                listOfTrees.add(obj);
+
+                System.out.println("********************************************");
+                classificationComplementOfData(c45, instances);
+                System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
+//                c45.TreeCARTj48 obj = new TreeCARTj48();
+//                obj.setC45(c45);
+//                listOfTrees.add(obj);
             }
         } else {
             System.out.println(ANSI_GREEN + "\n\n\tDRZEWA DECYZYJNE ZBUDOWANE"
@@ -63,4 +80,26 @@ public class BuildTree {
             }
         }
     }
-}
+
+    /**
+     * Klasyfikacja nowych obiektow dopełniających zbiór danych wejściowych
+     *
+     * @param c
+     * @param inst
+     * @return List<String[]> liste tablic stringów zawierającą
+     * @throws Exception
+     */
+    public static String[] classificationComplementOfData(J48 c, Instances inst) throws Exception {
+
+        Instances unlabeledData = Data.loadData("./kombinacje.arff");
+        unlabeledData.setClassIndex(unlabeledData.numAttributes() - 1);
+        String[] arrDec = new String[unlabeledData.numInstances()];
+        for (int i = 0; i < unlabeledData.numInstances(); i++) {
+            //Klasyfikacja obiektu i wypisanie proponowanej przez drzewo decyzji
+            System.out.println(c.classifyInstance(unlabeledData.instance(i)));
+
+        }
+        return arrDec;
+    }
+
+} 

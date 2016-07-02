@@ -5,9 +5,7 @@
  */
 package com.mycompany.treess;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +19,7 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
+import weka.core.converters.ArffSaver;
 
 /**
  * @author kosa1010
@@ -37,6 +36,10 @@ public class Data {
     public static Set<List<Integer>> permutate;
     public static int numOfInstances;
 
+    public static void setData(Instances data) {
+        Data.data = data;
+    }
+
     /**
      * Zwraca dane
      *
@@ -52,6 +55,7 @@ public class Data {
      * @return
      */
     public Instances getDataComplement() {
+        BuildTree.instances = new Instances(dataWithNewInstances);
         return dataWithNewInstances;
     }
 
@@ -68,17 +72,15 @@ public class Data {
      * Ładuje dane z pliku
      *
      * @param filePath
+     * @return
      * @throws IOException
      */
-    public void loadData(String filePath) throws IOException {
+    public static Instances loadData(String filePath) throws IOException {
+        Instances datas;
         ArffLoader loader = new ArffLoader();
         loader.setFile(new File(filePath));
-        data = loader.getDataSet();
-        numOfInstances = data.numInstances();
-        System.out.println("\t\t\tWczytane dane\n");
-        for (int i = 0; i < data.numInstances(); i++) {
-            System.out.println("\t\t\t" + data.instance(i).toString());
-        }
+        datas = loader.getDataSet();
+        return datas;
     }
 
     /**
@@ -134,41 +136,22 @@ public class Data {
             dataInstances.add(instance);
         }
         //wybieranie kolejnych nowych instancji
-        int r = 0;
         for (int i = 0; i < dataInstances.numInstances(); i++) {
             Instance instance = dataInstances.instance(i);
-            //    System.out.print(r + " ");
             //ustawianie poszczególnych wartości dla nowych instancji
             for (int k = 0; k < dataTable[0].length; k++) {
                 instance.setValue(k, dataTable[i][k]);
-                //      System.out.print(dataTable[i][k]);
             }
-            //     System.out.println("");
-            r++;
         }
 
-        //saveData(dataInstances, "./kombinacje.arff"); //Zapis utworzonej tablicy
+        saveData(dataInstances, "./kombinacje.arff"); //Zapis utworzonej tablicy
         dataWithNewInstances = dataInstances;
         List<Instance> mojaSyuperLista = new ArrayList();
-        for (int i = 0; i < dataInstances.numInstances(); i++) {
-            //System.out.println("\t\t\t" + Arrays.toString(dataInstances.instance(i).toDoubleArray()));
+        for (int i = 0; i < dataInstances.numInstances(); i++) {//////////////////////////////////////////////////////////77777777777777777777777777777777777777777777777777777777777777777777777777777777777777
             Instance ist = new Instance(dataInstances.instance(i));//
             System.out.println(ist.toString());
             mojaSyuperLista.add(ist);
-
         }
-        for (int k = 0; k < mojaSyuperLista.size(); k++) {
-              System.out.println("moja " + mojaSyuperLista.get(k).toString());
-
-        }
-//        
-//         for (int i = 0; i < data.numInstances(); i++) {
-//            System.out.println("\t\t\t" + data.instance(i).toString());
-////        }
-//        Classifier cls_co = (Classifier) weka.core.SerializationHelper
-//                .read("/CO_J48Model.model");
-
-        //    System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         return dataInstances;
     }
 
@@ -181,14 +164,14 @@ public class Data {
      */
     public void saveData(Instances data, String fileName)
             throws IOException {
-        try (//        ArffSaver saver = new ArffSaver(); //Utworzenie obiektu zapisujacego dane
-                //        saver.setFile(new File(fileName));
-                //        saver.setInstances(data);
-                //        saver.writeBatch();
-                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            writer.write(data.toString());
-            writer.flush();
-        }
+        ArffSaver saver = new ArffSaver(); //Utworzenie obiektu zapisujacego dane
+        saver.setFile(new File(fileName));
+        saver.setInstances(data);
+        saver.writeBatch();
+//                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+//            writer.write(data.toString());
+//            writer.flush();
+//    }
     }
 
     /**
@@ -318,17 +301,7 @@ public class Data {
                 }
             }
         }
-        // Data.objToDel = objToDel;
         dataPerm = removeRow(permutation, objToDel);
-//        int h = 0;
-//        for (int[] i : dataPerm) {
-//            System.out.print(h + "\t");
-//            for (int k : i) {
-//                System.out.print(k + " ");
-//            }
-//            System.out.println("");
-//            h++;
-//        }
     }
 
     /**

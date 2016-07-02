@@ -13,7 +13,7 @@ import weka.core.Utils;
  *
  * @author kosa1010
  */
-public class CART {
+public class CART extends SimpleCart {
 
     public static String options;
     public static String tree;
