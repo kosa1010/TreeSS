@@ -89,10 +89,12 @@ public class BuildTree {
      * @return List<String[]> liste tablic stringów zawierającą
      * @throws Exception
      */
-    public static String[] classificationComplementOfData(J48 c, Instances inst) throws Exception {
+    public static String[] classificationComplementOfData(Classifier c, Instances inst) throws Exception {
 
         Instances unlabeledData = Data.loadData("./kombinacje.arff");
         unlabeledData.setClassIndex(unlabeledData.numAttributes() - 1);
+        System.out.println("Liczba obikektów " + unlabeledData.numInstances());
+        System.out.println("Liczba atrybutów " + unlabeledData.numAttributes());
         String[] arrDec = new String[unlabeledData.numInstances()];
         for (int i = 0; i < unlabeledData.numInstances(); i++) {
             //Klasyfikacja obiektu i wypisanie proponowanej przez drzewo decyzji
