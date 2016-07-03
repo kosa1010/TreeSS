@@ -30,14 +30,28 @@ public class Data {
     private static Instances dataWithNewInstances;
     public static int[][] dataInTable;
     public static int[][] permutation;
-    public static int[][] dataPerm;
+    private static int[][] dataPerm;
     public static List<Set> listOfAtribValue;
     public static List<List<Integer>> listOfAtributesValue;
     public static Set<List<Integer>> permutate;
     public static int numOfInstances;
 
-    public static void setData(Instances data) {
+    /**
+     * Ustawia dane wejściowe
+     *
+     * @param data
+     */
+    public void setData(Instances data) {
         Data.data = data;
+    }
+
+    /**
+     * Pobiera tablicę z wartościami obiektów na poszczególnych atrybutach
+     *
+     * @return
+     */
+    public int[][] getDataPerm() {
+        return dataPerm;
     }
 
     /**
@@ -55,7 +69,6 @@ public class Data {
      * @return
      */
     public Instances getDataComplement() {
-        BuildTree.instances = new Instances(dataWithNewInstances);
         return dataWithNewInstances;
     }
 
@@ -76,11 +89,9 @@ public class Data {
      * @throws IOException
      */
     public static Instances loadData(String filePath) throws IOException {
-        Instances datas;
         ArffLoader loader = new ArffLoader();
         loader.setFile(new File(filePath));
-        datas = loader.getDataSet();
-        return datas;
+        return loader.getDataSet();
     }
 
     /**
@@ -120,8 +131,6 @@ public class Data {
         }
         FastVector labels = new FastVector(); //Utworzenie wartosci nowego atrybutu symbolicznego
 
-        System.out.println("****************************************************************");
-
         int tab[] = listToTab(listOfAtribValue.get(data.numAttributes() - 1));//zamiana niepowtzarzalnych wartości atrybutu decyzyjnego na tablice
 
         for (int s : tab) {
@@ -145,13 +154,14 @@ public class Data {
         }
 
         saveData(dataInstances, "./kombinacje.arff"); //Zapis utworzonej tablicy
-        dataWithNewInstances = dataInstances;
         List<Instance> mojaSyuperLista = new ArrayList();
-        for (int i = 0; i < dataInstances.numInstances(); i++) {//////////////////////////////////////////////////////////77777777777777777777777777777777777777777777777777777777777777777777777777777777777777
+        System.out.println("\nWygenerowane obiekty dopełniające ststem informacyjny");
+        for (int i = 0; i < dataInstances.numInstances(); i++) {
             Instance ist = new Instance(dataInstances.instance(i));//
-            System.out.println(ist.toString());
+            System.out.println("\t\t" + ist.toString());
             mojaSyuperLista.add(ist);
         }
+        System.out.println("Nowych obiektów: " +mojaSyuperLista.size());
         return dataInstances;
     }
 

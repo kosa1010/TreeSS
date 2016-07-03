@@ -1,13 +1,12 @@
 package com.mycompany.treess;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
-import java.lang.String;
 import weka.classifiers.trees.J48;
-import weka.core.Instance;
+import weka.classifiers.trees.SimpleCart;
+import weka.core.Utils;
 
 /**
  *
@@ -49,21 +48,13 @@ public class BuildTree {
                     + "ALGORYTMEM J48 DLA POSZCZEGÓLNYCH DECYZJI" + ANSI_RESET);
             for (int i = 0; i < data.numAttributes(); i++) {
                 data.setClassIndex(i);
-                System.out.print("Nowy atrybut decyzyjny " + data.classAttribute().name() + " o id " + i);
-                System.out.println();
                 System.out.println(ANSI_PURPLE + "\t\tAtrybut decyzyjny  "
                         + data.attribute(i).name() + "\n" + ANSI_RESET);
                 C45 c45 = new C45();
-//               
-                
-                c45.buildJ48(data, options);
-
-                System.out.println("********************************************");
-                classificationComplementOfData(c45, instances);
-                System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
-//                c45.TreeCARTj48 obj = new TreeCARTj48();
-//                obj.setC45(c45);
-//                listOfTrees.add(obj);
+                J48 j48 = c45.buildJ48(data, options);
+                System.out.println(ANSI_RED + "Stan faktyczny a proponowane decyzje "
+                        + ANSI_RESET + "" + ANSI_CYAN + " Poprawność klasyfikacji" + ANSI_RESET);
+                classificationComplementOfData(TREE.C45, j48, data, complementData, Utils.splitOptions(options), i);
             }
         } else {
             System.out.println(ANSI_GREEN + "\n\n\tDRZEWA DECYZYJNE ZBUDOWANE"
@@ -74,9 +65,9 @@ public class BuildTree {
                         + data.attribute(i).name() + "\n" + ANSI_RESET);
                 CART cart = new CART();
                 cart.buildCART(data, options);
-                TreeCARTj48 obj = new TreeCARTj48();
-                obj.setCart(cart);
-                listOfTrees.add(obj);
+                System.out.println(ANSI_RED + "Stan faktyczny a proponowane decyzje "
+                        + ANSI_RESET + "" + ANSI_CYAN + " Poprawność klasyfikacji" + ANSI_RESET);
+                classificationComplementOfData(TREE.CART, cart, data, complementData, Utils.splitOptions(options), i);
             }
         }
     }
@@ -84,24 +75,62 @@ public class BuildTree {
     /**
      * Klasyfikacja nowych obiektow dopełniających zbiór danych wejściowych
      *
+     * @param t
      * @param c
+     * @param data
      * @param inst
-     * @return List<String[]> liste tablic stringów zawierającą
+     * @param options
+     * @param atr
+     * @return
      * @throws Exception
      */
-    public static String[] classificationComplementOfData(Classifier c, Instances inst) throws Exception {
+    public static String[] classificationComplementOfData(TREE t, Classifier c, Instances data, Instances inst, String[] options, int atr) throws Exception {
 
+        String[] arrDec = new String[inst.numInstances()];
+        Instances trainData = Data.loadData(MainClass.path);
+        trainData.setClassIndex(trainData.numAttributes() - 1);
         Instances unlabeledData = Data.loadData("./kombinacje.arff");
-        unlabeledData.setClassIndex(unlabeledData.numAttributes() - 1);
-        System.out.println("Liczba obikektów " + unlabeledData.numInstances());
-        System.out.println("Liczba atrybutów " + unlabeledData.numAttributes());
-        String[] arrDec = new String[unlabeledData.numInstances()];
-        for (int i = 0; i < unlabeledData.numInstances(); i++) {
-            //Klasyfikacja obiektu i wypisanie proponowanej przez drzewo decyzji
-            System.out.println(c.classifyInstance(unlabeledData.instance(i)));
-
+        if (t == TREE.C45) {
+            J48 tree = new J48();
+            tree.setOptions(options);
+            tree.buildClassifier(trainData);
+            unlabeledData.setClassIndex(unlabeledData.numAttributes() - 1);
+            Instances labeled = new Instances(unlabeledData);
+            for (int i = 0; i < unlabeledData.numInstances(); i++) {
+                //Klasyfikacja obiektu
+                double decision = tree.classifyInstance(unlabeledData.instance(i));
+                labeled.instance(i).setClassValue(decision);
+                int decClasyfier = (int) decision;
+                arrDec[i] = String.valueOf(decClasyfier);
+                int decFromTable = (int) (unlabeledData.instance(i).toDoubleArray())[atr];
+                String correct = "X";
+                if (decClasyfier == decFromTable) {
+                    correct = "OK";
+                }
+                System.out.println("Prop. decyzja = " + decClasyfier + "\tDEC = "
+                        + decFromTable + "\t\t\t" + ANSI_CYAN + correct + ANSI_RESET);
+            }
+        } else {
+            SimpleCart tree = new SimpleCart();
+            tree.setOptions(options);
+            tree.buildClassifier(trainData);
+            unlabeledData.setClassIndex(unlabeledData.numAttributes() - 1);
+            Instances labeled = new Instances(unlabeledData);
+            for (int i = 0; i < unlabeledData.numInstances(); i++) {
+                //Klasyfikacja obiektu
+                double decision = tree.classifyInstance(unlabeledData.instance(i));
+                labeled.instance(i).setClassValue(decision);
+                int decClasyfier = (int) decision;
+                arrDec[i] = String.valueOf(decClasyfier);
+                int decFromTable = (int) (unlabeledData.instance(i).toDoubleArray())[atr];
+                String correct = "X";
+                if (decClasyfier == decFromTable) {
+                    correct = "OK";
+                }
+                System.out.println("Prop. decyzja = " + decClasyfier + "\tDEC = "
+                        + decFromTable + "\t\t\t" + ANSI_CYAN + correct + ANSI_RESET);
+            }
         }
         return arrDec;
     }
-
-} 
+}
