@@ -38,7 +38,7 @@ public class MainClass {
 
             data.setDataComplement(data.dataFromTableToInstances(data.getDataPerm()));
 
-            System.out.println("\n\n Podaj parametry dla uworzenia drzewa algorytmem J48 ");
+            System.out.println("\n\n Podaj parametry dla uworzenia drzewa algorytmem C4.5 ");
             String optionsJ48 = sc.next();
             BuildTree.setAllAtrribAsDecision(data.getData(), BuildTree.TREE.C45, optionsJ48);
             System.out.println("\n\n Podaj parametry dla uworzenia drzewa algorytmem CART ");
